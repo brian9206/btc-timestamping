@@ -63,17 +63,7 @@ StampingService.PREFIX = String.fromCharCode(0xff);
 StampingService.prototype._setDataPath = function() {
   $.checkState(this.node.services.bitcoind.spawn.datadir, 'bitcoind is expected to have a "spawn.datadir" property');
   var datadir = this.node.services.bitcoind.spawn.datadir;
-  if (this.node.network === Networks.livenet) {
-    this.dataPath = datadir + '/bitcore-stamps.db';
-  } else if (this.node.network === Networks.testnet) {
-    if (this.node.network.regtestEnabled) {
-      this.dataPath = datadir + '/regtest/bitcore-stamps.db';
-    } else {
-      this.dataPath = datadir + '/testnet3/bitcore-stamps.db';
-    }
-  } else {
-    throw new Error('Unknown network: ' + this.network);
-  }
+  this.dataPath = datadir + '/bitcore-stamps.db';
 };
 
 StampingService.prototype.loadTip = function(callback) {
@@ -146,7 +136,7 @@ StampingService.prototype.loadTip = function(callback) {
  * @param {Function} callback
  */
 StampingService.prototype.connectBlock = function(block, callback) {
-  this.log.info('adding block', block.hash);
+  //this.log.info('adding block', block.hash);
   this.blockHandler(block, true, callback);
 };
 
@@ -201,7 +191,7 @@ StampingService.prototype.blockHandler = function(block, add, callback) {
 
       // If we find outputs with script data, we need to store the transaction into level db
       var scriptData = script.getData().toString('hex');
-      self.log.info('scriptData added to index:', scriptData);
+      self.log.info('scriptData added to index:', scriptData, 'height:', height);
 
       // Prepend a prefix to the key to prevent namespacing collisions
       // Append the block height, txid, and outputIndex for ordering purposes (ensures transactions will be returned
