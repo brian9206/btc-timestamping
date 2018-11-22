@@ -129,9 +129,11 @@ angular.module('iMadeThis', ['ngFileUpload', 'monospaced.qrcode'])
         .from(unspent2)
         .fee(50000);
 
+      var header = Buffer.from('FILEHASH', 'utf8').toString('hex');
+
       // Append the hash of the file to the transaction
       transaction2.addOutput(new Transaction.Output({
-        script: bitcore.Script.buildDataOut(fileHash, 'hex'),
+        script: bitcore.Script.buildDataOut(header + fileHash, 'hex'),
         satoshis: 0
       }));
 

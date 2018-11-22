@@ -12,6 +12,7 @@ var BufferUtil = bitcore.util.buffer;
 var Networks = bitcore.Networks;
 var Block = bitcore.Block;
 var $ = bitcore.util.preconditions;
+var header = Buffer.from('FILEHASH', 'utf8').toString('hex');
 
 function enableCors(response) {
   // A convenience function to ensure
@@ -170,6 +171,8 @@ StampingService.prototype.blockHandler = function(block, add, callback) {
   var txs = block.transactions;
   var height = block.__height;
 
+  self.log.info('syncing cache. Block height:', height);
+
   // Loop through every transaction in the block
   var transactionLength = txs.length;
   for (var i = 0; i < transactionLength; i++) {
@@ -191,12 +194,17 @@ StampingService.prototype.blockHandler = function(block, add, callback) {
 
       // If we find outputs with script data, we need to store the transaction into level db
       var scriptData = script.getData().toString('hex');
+
+      if (!scriptData.startsWith(header)) {
+        continue;
+      }
+
       self.log.info('scriptData added to index:', scriptData, 'height:', height);
 
       // Prepend a prefix to the key to prevent namespacing collisions
       // Append the block height, txid, and outputIndex for ordering purposes (ensures transactions will be returned
       // in the order they occured)
-      var key = [StampingService.PREFIX, scriptData, height, txid, outputIndex].join('-');
+      var key = [StampingService.PREFIX, scriptData.substring(header.length), height, txid, outputIndex].join('-');
       var value = block.hash;
 
       var action = add ? 'put' : 'del';
