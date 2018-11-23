@@ -101,8 +101,7 @@ h1 {
   margin: 0 auto;
   display: block;
   /*border-radius: 10px;*/
-  background-color: #1e5799;
-  background: url(../img/bg.png) center no-repeat; }
+  background-color: #1e5799; }
   .container.success {
     background: #09C286; }
 

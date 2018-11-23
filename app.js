@@ -47,6 +47,10 @@ angular.module('iMadeThis', ['ngFileUpload', 'monospaced.qrcode'])
             $scope.pendingTimestamp = pendingFileHashes[fileHash];
           }
         }
+        else if (statusCode === -1) {
+          $scope.cancel();
+          alert('Could not connect to the stamping service.');
+        }
       }
     }
 
@@ -158,7 +162,7 @@ angular.module('iMadeThis', ['ngFileUpload', 'monospaced.qrcode'])
     }
 
     $scope.openTransactionInBrowser = function(transactionId){
-      require('shell').openExternal('https://test-insight.bitpay.com/tx/' + transactionId);
+      require('electron').shell.openExternal('https://test-insight.bitpay.com/tx/' + transactionId);
     };
 
     // Prevent files that are dragged into the electron browser window
